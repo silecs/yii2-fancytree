@@ -20,7 +20,8 @@
   "require": {
     "yiisoft/yii2": "~2",
     "yiisoft/yii2-jui": "~2",
-    "bower-asset/fancytree": "~2"
+    "bower-asset/fancytree": "~2",
+    "bower-asset/js-cookie": "~2"
   },
   "autoload": {
     "psr-4": {

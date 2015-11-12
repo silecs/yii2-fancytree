@@ -19,9 +19,14 @@ class FancytreeAssets extends AssetBundle
     static public $skin = 'vista';
 
     /**
+     * @var boolean
+     */
+    static public $cookies = false;
+
+    /**
      * @var string the directory that contains the source asset files for this asset bundle.
      */
-    public $sourcePath = '@bower/fancytree/dist';
+    public $sourcePath = '@bower';
 
     /**
      * @var array list of bundle class names that this bundle depends on.
@@ -36,9 +41,12 @@ class FancytreeAssets extends AssetBundle
      */
     public function registerAssetFiles($view)
     {
-        $this->js[] = 'jquery.fancytree-all'
+        if (self::$cookies) {
+            $this->js[] = 'js-cookie/src/js.cookie.js';
+        }
+        $this->js[] = 'fancytree/dist/jquery.fancytree-all'
             . (defined('YII_DEBUG') && YII_DEBUG ? '.js' : '.min.js');
-        $this->css[] = "skin-" . self::$skin . '/ui.fancytree'
+        $this->css[] = "fancytree/dist/skin-" . self::$skin . '/ui.fancytree'
             . (defined('YII_DEBUG') && YII_DEBUG ? '.css' : '.min.css');
         parent::registerAssetFiles($view);
     }

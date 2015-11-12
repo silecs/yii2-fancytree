@@ -77,6 +77,15 @@ function(event, data){
         if ($this->skin) {
             FancytreeAssets::$skin = $this->skin;
         }
+        if (
+            isset($this->options['extensions'])
+            && in_array('persist', $this->options['extensions'])
+            && isset($this->options['persist']['store'])
+            && $this->options['persist']['store'] !== 'local'
+            && $this->options['persist']['store'] !== 'session'
+        ) {
+            FancytreeAssets::$cookies = true;
+        }
         FancytreeAssets::register($this->getView());
         if ($this->url) {
             $this->applyAjaxUrl($this->url);
