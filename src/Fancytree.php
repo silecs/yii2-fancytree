@@ -36,7 +36,7 @@ class Fancytree extends Widget
     public $url;
 
     /**
-     * @var boolean
+     * @var boolean Cache the HTTP GET requests.
      */
     public $cache = true;
 
@@ -97,11 +97,11 @@ function(event, data){
      */
     public function run()
     {
-        $id = (empty($this->options['id']) ? $this->getId() : $this->options['id']);
-        echo Html::tag('div', '', ['id' => 'fancytree-' . $id]);
+        $id = (empty($this->options['id']) ? 'fancytree-' . $this->getId() : $this->options['id']);
+        echo Html::tag('div', '', ['id' => $id, 'class' => 'fancytree']);
         // Loads jQuery and the initialisation JS code
         $this->getView()->registerJs(
-            "$('#fancytree-{$id}').fancytree("
+            "$('#{$id}').fancytree("
             . Json::encode($this->options)
             . ");"
         );
