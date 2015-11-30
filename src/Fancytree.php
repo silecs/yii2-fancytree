@@ -41,6 +41,11 @@ class Fancytree extends Widget
     public $cache = true;
 
     /**
+     * @var string Key of the active node (only if the node isn't lazily loaded).
+     */
+    public $activeNode;
+
+    /**
      * @var array
      */
     public $options = [];
@@ -98,6 +103,15 @@ function(event, data){
     public function run()
     {
         $id = (empty($this->options['id']) ? 'fancytree-' . $this->getId() : $this->options['id']);
+        if ($this->activeNode) {
+            $this->options['init'] = new \yii\web\JsExpression("
+function(event, data) {
+console.log(data);
+\$('#{$id}').fancytree('getTree').activateKey('{$this->activeNode}');
+alert('done');
+}"
+            );
+        }
         echo Html::tag('div', '', ['id' => $id, 'class' => 'fancytree']);
         // Loads jQuery and the initialisation JS code
         $this->getView()->registerJs(
