@@ -108,7 +108,6 @@ function(event, data){
 function(event, data) {
 console.log(data);
 \$('#{$id}').fancytree('getTree').activateKey('{$this->activeNode}');
-alert('done');
 }"
             );
         }
