@@ -38,7 +38,7 @@ A richer code sample that shows the full syntax of this widget:
 ```
 <?php
 echo \silecs\fancytree\Fancytree::widget([
-	'url' => Url::to(['tree/children'], // default is "" (read from options["source"])
+    'url' => Url::to(['tree/children'], // default is "" (read from options["source"])
     'cache' => false,                   // default is true
     'skin' => 'awesome',                // default is "vista"
     'options' => [],                    // genuine FancyTree configuration

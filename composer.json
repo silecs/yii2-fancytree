@@ -2,6 +2,7 @@
   "name": "silecs/yii2-fancytree",
   "description": "Yii2 FancyTree widget",
   "type": "yii2-extension",
+  "version": "2.0.0',
   "keywords": [
     "yii2",
     "tree",
@@ -20,7 +21,7 @@
   "require": {
     "yiisoft/yii2": "~2",
     "yiisoft/yii2-jui": "~2",
-    "bower-asset/fancytree": "~2",
+    "bower-asset/fancytree": "~2.37.0",
     "bower-asset/js-cookie": "~2"
   },
   "autoload": {

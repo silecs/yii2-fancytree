@@ -1,9 +1,5 @@
 <?php
 
-/*
- * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
- */
-
 namespace silecs\fancytree;
 
 use yii\base\Widget;
@@ -26,61 +22,68 @@ use yii\helpers\Json;
 class Fancytree extends Widget
 {
     /**
-     * @var string
-     */
-    public $skin;
-
-    /**
-     * @var string
-     */
-    public $url;
-
-    /**
-     * @var boolean Cache the HTTP GET requests.
-     */
-    public $cache = true;
-
-    /**
      * @var string Key of the active node (only if the node isn't lazily loaded).
      */
     public $activeNode;
 
     /**
-     * @var array
+     * @var boolean Cache the HTTP GET requests, on the client side.
+     */
+    public $cache = true;
+
+    /**
+     * @var string[] List of HTML class names for the tree container.
+     */
+    public $classes = [];
+
+    /**
+     * @var array The various options of FancyTree.
+     *   See https://wwwendt.de/tech/fancytree/doc/jsdoc/global.html#FancytreeOptions
+     *   and https://wwwendt.de/tech/fancytree/demo/sample-configurator.html
      */
     public $options = [];
 
     /**
-     * Helps to setup a fully AJAX tree to $url?id={key}.
+     * @var string This will overwrite the options['source'] config.
+     */
+    public $url;
+
+    /**
+     * Setup the AJAX lazy loading of the tree with calls to "$url?mode=children&id={{node.key}}".
      *
      * @param string $url
      */
-    public function applyAjaxUrl($url)
+    public function applyAjaxUrl(string $url): void
     {
         $this->options['source'] = [
             'url' => $url,
             'cache' => $this->cache
         ];
-        $this->options['lazyLoad'] = new \yii\web\JsExpression('
-function(event, data){
-    var node = data.node;
-    // Load child nodes via ajax GET url?mode=children&parent=1234
-    data.result = {
-      url: "' . addslashes($url) . '",
-      data: { id: node.key },
-      cache: ' . ($this->cache ? "true" : "false") . '
-    };
-}'
+        $encodedUrl = json_encode($url);
+        $encodedCache = json_encode($this->cache);
+        $this->options['lazyLoad'] = new \yii\web\JsExpression(
+            <<<EOJS
+            function(event, data){
+                var node = data.node;
+                // Load child nodes via ajax GET url?mode=children&id=1234
+                data.result = {
+                    url: {$encodedUrl},
+                    data: { id: node.key },
+                    cache: {$encodedCache}
+                };
+            }
+            EOJS
         );
     }
 
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
-        if ($this->skin) {
-            FancytreeAssets::$skin = $this->skin;
+        parent::init();
+        if (!empty($this->options['skin'])) {
+            FancytreeAssets::$skin = $this->options['skin'];
         }
         if (
             isset($this->options['extensions'])
@@ -92,6 +95,7 @@ function(event, data){
             FancytreeAssets::$cookies = true;
         }
         FancytreeAssets::register($this->getView());
+
         if ($this->url) {
             $this->applyAjaxUrl($this->url);
         }
@@ -100,23 +104,27 @@ function(event, data){
     /**
      * @inheritdoc
      */
-    public function run()
+    public function run(): string
     {
-        $id = (empty($this->options['id']) ? 'fancytree-' . $this->getId() : $this->options['id']);
+        $id = empty($this->options['id']) ? 'fancytree-' . $this->getId() : $this->options['id'];
+        $selector = json_encode("#{$id}");
         if ($this->activeNode) {
-            $this->options['init'] = new \yii\web\JsExpression("
-function(event, data) {
-console.log(data);
-\$('#{$id}').fancytree('getTree').activateKey('{$this->activeNode}');
-}"
+            $activeNode = json_encode($this->activeNode);
+            $this->options['init'] = new \yii\web\JsExpression(
+                <<<EOJS
+                function(event, data) {
+                    $({$selector}).fancytree('getTree').activateKey('{$activeNode}');
+                }
+                EOJS
             );
         }
-        echo Html::tag('div', '', ['id' => $id, 'class' => 'fancytree']);
+
         // Loads jQuery and the initialisation JS code
         $this->getView()->registerJs(
-            "$('#{$id}').fancytree("
-            . Json::encode($this->options)
-            . ");"
+            "$({$selector}).fancytree(" . Json::encode($this->options) . ");"
         );
+
+        $this->classes[] = 'fancytree';
+        return Html::tag('div', '', ['id' => $id, 'class' => join(" ", $this->classes)]);
     }
 }

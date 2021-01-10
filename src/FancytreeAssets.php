@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
- */
-
 namespace silecs\fancytree;
 
 use yii\web\AssetBundle;
@@ -14,14 +10,21 @@ use yii\web\AssetBundle;
 class FancytreeAssets extends AssetBundle
 {
     /**
-     * @var string The FancyTree skin.
-     */
-    static public $skin = 'vista';
-
-    /**
      * @var boolean
      */
-    static public $cookies = false;
+    public static $cookies = false;
+
+    /**
+     * @var string The FancyTree skin.
+     */
+    public static $skin = 'vista';
+
+    /**
+     * @var array list of bundle class names that this bundle depends on.
+     */
+    public $depends = [
+        'yii\web\JqueryAsset',
+    ];
 
     /**
      * @var string the directory that contains the source asset files for this asset bundle.
@@ -29,25 +32,18 @@ class FancytreeAssets extends AssetBundle
     public $sourcePath = '@bower';
 
     /**
-     * @var array list of bundle class names that this bundle depends on.
-     */
-    public $depends = [
-        'yii\web\JqueryAsset',
-        'yii\jui\JuiAsset',
-    ];
-
-    /**
      * @inheritdoc
      */
-    public function registerAssetFiles($view)
+    public function registerAssetFiles($view): void
     {
         if (self::$cookies) {
             $this->js[] = 'js-cookie/src/js.cookie.js';
         }
-        $this->js[] = 'fancytree/dist/jquery.fancytree-all'
-            . (defined('YII_DEBUG') && YII_DEBUG ? '.js' : '.min.js');
+        $this->js[] = 'fancytree/dist/jquery.fancytree-all-deps.min.js';
+
         $this->css[] = "fancytree/dist/skin-" . self::$skin . '/ui.fancytree'
             . (defined('YII_DEBUG') && YII_DEBUG ? '.css' : '.min.css');
+
         parent::registerAssetFiles($view);
     }
 }
