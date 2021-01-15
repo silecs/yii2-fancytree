@@ -2,7 +2,7 @@
   "name": "silecs/yii2-fancytree",
   "description": "Yii2 FancyTree widget",
   "type": "yii2-extension",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "keywords": [
     "yii2",
     "tree",
